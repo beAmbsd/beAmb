@@ -9,8 +9,7 @@ def url_object(config_type: str | None, default='dev'):
     return URI
 
 
-engine = create_engine(url_object('dev'),
-                    #    echo=True,
+engine = create_engine(url_object('dev'),  # echo=True,
                        isolation_level="READ COMMITTED",
                        max_overflow=5,
                        pool_size=1,
