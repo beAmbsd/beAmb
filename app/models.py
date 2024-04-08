@@ -1,17 +1,19 @@
 from datetime import datetime
+from werkzeug.security import generate_password_hash
 from sqlalchemy import MetaData, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from flask_login import UserMixin
 
 
 class Base(DeclarativeBase):
     metadata = MetaData()
 
 
-class User(Base):
+class User(Base, UserMixin):
     """ User model. """
     def __init__(self, name, password, email):
         self.name: str = name
-        self.password: str = password
+        self._password: str = password
         self.email: str = email
 
     __tablename__ = 'user'
@@ -23,6 +25,12 @@ class User(Base):
     registered: Mapped[datetime] = mapped_column(
         default=datetime.now
         )
+
+    @property
+    def password_hash(self, paswd):
+        self._password = generate_password_hash(password=paswd,
+                                                method='pbkdf2',
+                                                salt_length=16)
 
     def __repr__(self):
         return f'User {self.name}'

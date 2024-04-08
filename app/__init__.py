@@ -1,19 +1,22 @@
 import os
 from flask import Flask
 from config import config_by_name
-from flask_login import LoginManager
 from app.extensions.db import engine
 from app.models import Base
-from app.api import bp_api
+from app.auth import bp_auth
+from flask_login import LoginManager
+
+
+login_manager = LoginManager()
 
 
 def create_app(config_name):
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True,
+                subdomain_matching=True)
     app.config.from_object(config_by_name[config_name])
 
     Base.metadata.create_all(bind=engine)  # create all DB tables
-    login_manager = LoginManager()
     login_manager.init_app(app=app, add_context_processor=True)
 
     try:
@@ -21,7 +24,7 @@ def create_app(config_name):
     except OSError:
         pass
 
-    app.register_blueprint(bp_api, url_prefix='/api/v0.1')
+    app.register_blueprint(bp_auth, url_prefix='/auth')
 
     # a simple page that says hello
     @app.route('/hello')
