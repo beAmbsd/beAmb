@@ -50,32 +50,28 @@ class EmailValidator(Validator):
     def __init__(self, minlen: int=None, maxlen: int=None) -> None:
         self.minlen = minlen
         self.maxlen = maxlen
-        self.email_pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
+        self.email_pattern = r'^\w$'
 
     def validate(self, value):
         if self.minlen is not None and len(value.split('@')[0]) < self.minlen:
             raise ValueError('Name too short.')
         if self.maxlen is not None and len(value.split('@')[0]) > self.maxlen:
             raise ValueError('Name too long.')
-        if not re.match(self.email_pattern, value.strip()):
-            raise ValueError('Email is not valid.')
+        # if not re.match(self.email_pattern, value.strip()):
+        #     raise ValueError('Email is not valid.')
 
     
 class PasswordValidator(Validator):
 
-    def __init__(self, forbidden_chars: List[str],
-                 minlen: int=5, maxlen: int=None) -> None:
+    def __init__(self, minlen: int=5, maxlen: int=None) -> None:
         self.minlen = minlen
         self.maxlen = maxlen
-        self.forbidden_chars = ['(', ')', '\\', '\n', '\`']
 
     def validate(self, value):
         if self.minlen is not None and len(value) < self.minlen:
             raise ValueError('Password too short')
         if self.maxlen is not None and len(value) > self.maxlen:
             raise ValueError('name too long')
-        if self.forbidden_chars in value:
-            raise TypeError('Forbidden chars!')
         
 
 class UserValidator:
@@ -90,3 +86,17 @@ class UserValidator:
         self.email = email
         self.password = password
 
+    def to_dict(self) -> dict[str, str]:
+        """
+        The data received from the user 
+        will be returned in the form of a dictionary.
+        """
+        return {'name': self.name,
+                'email': self.email,
+                'password': self.password}
+        
+
+    def __repr__(self) -> str:
+        return "Username: {}\nEmail: {}\nPassword: {}".format(
+            self.name, self.email, self.password
+            )
