@@ -1,7 +1,6 @@
 from datetime import datetime
 from sqlalchemy import MetaData, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from app.db.service import password_hashing
 
 
 class Base(DeclarativeBase):
